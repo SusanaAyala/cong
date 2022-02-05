@@ -3,7 +3,7 @@ export const Publication = ({ title, publications }) => {
         <div>
             {title}
             {publications?.map((pub) => (
-                <p>{pub.title_s}</p>
+                <p key={pub.id}>{pub.title_s}</p>
             ))}
         </div>
     )

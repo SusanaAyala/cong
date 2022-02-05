@@ -1,15 +1,20 @@
 
+import axios from "axios";
 import { useEffect, useState } from "react";
-import axios from "../utils/axios";
 import { Publication } from "./Publication";
-
-const recentPubsUrl = "/v3/search?query=q=index_s:publications&sort=timestamp desc&uuid=cb3e6ee0-7d68-11ec-ac30-35aecd126a5a&cuid=cb3e6ee1-7d68-11ec-ac30-35aecd126a5a"
+import { Search } from "./Search";
 
 export const Publications = () => {
+    const user = localStorage.getItem("user");
     const [recentPubs, setRecentPubs] = useState([]);
+    const [filteredPubs, setFilteredPubs] = useState(null);
 
     const fetchRecentPublications = async () => {
-        const { data } = await axios.get(recentPubsUrl);
+        const { data } = await axios.get("/publications", {
+            headers: {
+                skey: JSON.parse(user)?.skey
+            }
+        });
         setRecentPubs(data?.response.docs);
     };
 
@@ -17,9 +22,18 @@ export const Publications = () => {
         fetchRecentPublications();
     }, []);
 
+    const handleSearch = (value) => {
+        if (value == "") {
+            return setFilteredPubs(null);
+        }
+        const filtered = recentPubs.filter((pub) => pub.title_s.toLowerCase().includes(value.toLowerCase()));
+        setFilteredPubs(filtered);
+    }
+
     return (
         <div>
-            <Publication title={"Recent Publications"} publications={recentPubs} />
+            <Search handleSearch={handleSearch} />
+            <Publication title={"Recent Publications"} publications={filteredPubs || recentPubs} />
         </div>
     )
 };

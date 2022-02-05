@@ -1,4 +1,4 @@
-import axios from "../utils/axios";
+import axios from "axios";
 import { useState } from "react";
 import { useAuth } from "../contexts/auth";
 import {
@@ -37,32 +37,31 @@ export const Login = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const { password, username } = credentials;
-        // if (!username || !password) {
-        //     return;
-        // }
-        // const encodedData = "Basic " + window.btoa(`${username}:${password}`);
-        // try {
-        //     const { data } = await axios.post("/v3/login", {}, {
-        //         headers: {
-        //             Authorization: encodedData
-        //         },
-        //         params: {
-        //             silo: "congility_demo"
-        //         },
-        //     });
-        //     console.log(data);
-        // } catch (error) {
-        //     console.error(error);
-        // }
-        auth.signin(username, () => {
-            // Send them back to the page they tried to visit when they were
-            // redirected to the login page. Use { replace: true } so we don't create
-            // another entry in the history stack for the login page.  This means that
-            // when they get to the protected page and click the back button, they
-            // won't end up back on the login page, which is also really nice for the
-            // user experience.
-            navigate(from, { replace: true });
-        });
+        if (!username || !password) {
+            return;
+        }
+        const encodedData = "Basic " + window.btoa(`${username}:${password}`);
+        try {
+            const { data } = await axios.post("/login", {}, {
+                headers: {
+                    Authorization: encodedData
+                },
+            });
+            if (data?.skey) {
+                auth.signin(username, () => {
+                    localStorage.setItem("user", JSON.stringify({ skey: data.skey, user: username }));
+                    // Send them back to the page they tried to visit when they were
+                    // redirected to the login page. Use { replace: true } so we don't create
+                    // another entry in the history stack for the login page.  This means that
+                    // when they get to the protected page and click the back button, they
+                    // won't end up back on the login page, which is also really nice for the
+                    // user experience.
+                    navigate(from, { replace: true });
+                });
+            }
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (

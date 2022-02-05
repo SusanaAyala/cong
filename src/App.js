@@ -16,7 +16,6 @@ function App() {
         <Routes>
           <Route path="/" element={
             <RequireAuth>
-              <Search />
               <Publications />
             </RequireAuth>
           } />

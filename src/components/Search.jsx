@@ -1,5 +1,8 @@
-export const Search = () => {
-    const handleChange = () => { };
+export const Search = ({ handleSearch }) => {
+    const handleChange = (event) => {
+        const { value } = event.target;
+        handleSearch(value);
+    };
 
     return (
         <div>

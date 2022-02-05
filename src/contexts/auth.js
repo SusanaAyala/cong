@@ -4,7 +4,7 @@ import { fakeAuthProvider } from "../utils/auth";
 let AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  let [user, setUser] = useState(null);
+  let [user, setUser] = useState(localStorage.getItem("user"));
 
   let signin = (newUser, callback) => {
     return fakeAuthProvider.signin(() => {
